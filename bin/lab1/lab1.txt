@@ -1,0 +1,56 @@
+Frågor att besvara:
+
+1 Vad är skillnaden på GoldModel och GameModel, och hur är de relaterade till varandra?
+GoldModel är en GameModel (implementationsarv). GoldModel definierar spelet Gold, medan GameModel definierar saker som är gemensamma för samtliga spel.
+
+2 Vilken klass utför själva ritandet av 'Gold coins' i spelet 'Gold game'?
+public void draw(final Graphics g, final int x, final int y, final Dimension d) i RoundTile.java
+och
+public void draw(final Graphics g, final int x, final int y, final Dimension d) i RectangularTile.java
+
+
+public void setModel(final GameModel model) {
+		this.model = model;
+		repaint();
+	}
+
+3 Vilken klass är det som anropar för detta ritande?
+
+
+4 Vad är syftet med GameFactory och hur kan den utvidgas för att få med Snake game? ( Endast ett kort svar behövs.)
+Den ger namn på de spel som finns tillgängliga. För att få med Snake game kan följande läggas till:
+return new String[] { "Gold" , "Snake game"};
+och
+public GameModel createGame(final String gameName) {
+		if (gameName.equals("Gold")) {
+			return new GoldModel();
+			if (gameName.equals("Snake")) {
+			return new SnakeModel(); 
+		}
+
+osv.
+
+5 Var återfinns beräkningen och kontrollen av 'gold eaters' rörelser?
+I private void updateDirection(final int key) i GoldModel.java
+och på diverse platser i GameController.java
+
+6 Hur lagras ett spelbräde och i vilken klass?
+
+
+7 Beskriv arbetsflödet av programmet.
+
+
+Detta kan göras genom att skissa på hur kontrollen flödar genom olika klasser och metoder.
+
+
+8 Ge en plan för hur du tänker fortsätta med deluppgift 2. Vilka klasser kommer du att skriva och vad kan du återanvända.
+
+
+
+
+Ledtrådar:
+
+Main.java är huvudklassen.
+XxxView.java visar de olika aspekterna av spelet.
+XxxModel.java utformar spelet och tar hand om utseende och känsla.
+GameController.java tar hand om indata, uppdateringar etc.
