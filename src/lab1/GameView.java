@@ -40,7 +40,9 @@ public class GameView extends JComponent {
 	public GameView(final int tileSide) {
 		this.tileSize = new Dimension(tileSide, tileSide);
 		this.modelSize = Constants.getGameSize();
-		Dimension preferredSize = new Dimension(this.modelSize.width * tileSide, this.modelSize.height * tileSide);
+		Dimension preferredSize = new Dimension(
+				this.modelSize.width * tileSide, this.modelSize.height
+						* tileSide);
 		setPreferredSize(preferredSize);
 	}
 
@@ -85,7 +87,8 @@ public class GameView extends JComponent {
 			for (int i = 0; i < this.modelSize.width; i++) {
 				for (int j = 0; j < this.modelSize.height; j++) {
 					GameTile tile = this.model.getGameboardState(i, j);
-					tile.draw(g, i * this.tileSize.width, j * this.tileSize.height, this.tileSize);
+					tile.draw(g, i * this.tileSize.width, j
+							* this.tileSize.height, this.tileSize);
 				}
 			}
 		} else {

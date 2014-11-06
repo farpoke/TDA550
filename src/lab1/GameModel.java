@@ -44,7 +44,8 @@ public abstract class GameModel {
 	 * @param tile
 	 *            The type of tile to paint in specified position
 	 */
-	protected void setGameboardState(final int x, final int y, final GameTile tile) {
+	protected void setGameboardState(final int x, final int y,
+			final GameTile tile) {
 		this.gameboardState[x][y] = tile;
 	}
 

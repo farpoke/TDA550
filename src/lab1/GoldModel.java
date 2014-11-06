@@ -45,9 +45,11 @@ public class GoldModel extends GameModel {
 	 * get/setGameboardState() methods.
 	 */
 	/** Graphical representation of a coin. */
-	private static final GameTile COIN_TILE = new RoundTile(new Color(255, 215, 0), new Color(255, 255, 0), 2.0);
+	private static final GameTile COIN_TILE = new RoundTile(new Color(255, 215,
+			0), new Color(255, 255, 0), 2.0);
 	/** Graphical representation of the collector */
-	private static final GameTile COLLECTOR_TILE = new RoundTile(Color.BLACK, Color.RED, 2.0);
+	private static final GameTile COLLECTOR_TILE = new RoundTile(Color.BLACK,
+			Color.RED, 2.0);
 	/** Graphical representation of a blank tile. */
 	private static final GameTile BLANK_TILE = new GameTile();
 	/** A list containing the positions of all coins. */
@@ -94,7 +96,8 @@ public class GoldModel extends GameModel {
 		Dimension size = getGameboardSize();
 		// Loop until a blank position is found and ...
 		do {
-			newCoinPos = new Position((int) (Math.random() * size.width), (int) (Math.random() * size.height));
+			newCoinPos = new Position((int) (Math.random() * size.width),
+					(int) (Math.random() * size.height));
 		} while (!isPositionEmpty(newCoinPos));
 		// ... add a new coin to the empty tile.
 		setGameboardState(newCoinPos, COIN_TILE);
@@ -117,21 +120,21 @@ public class GoldModel extends GameModel {
 	 */
 	private void updateDirection(final int key) {
 		switch (key) {
-			case KeyEvent.VK_LEFT:
-				this.direction = Directions.WEST;
-				break;
-			case KeyEvent.VK_UP:
-				this.direction = Directions.NORTH;
-				break;
-			case KeyEvent.VK_RIGHT:
-				this.direction = Directions.EAST;
-				break;
-			case KeyEvent.VK_DOWN:
-				this.direction = Directions.SOUTH;
-				break;
-			default:
-				// Don't change direction if another key is pressed
-				break;
+		case KeyEvent.VK_LEFT:
+			this.direction = Directions.WEST;
+			break;
+		case KeyEvent.VK_UP:
+			this.direction = Directions.NORTH;
+			break;
+		case KeyEvent.VK_RIGHT:
+			this.direction = Directions.EAST;
+			break;
+		case KeyEvent.VK_DOWN:
+			this.direction = Directions.SOUTH;
+			break;
+		default:
+			// Don't change direction if another key is pressed
+			break;
 		}
 	}
 
@@ -139,7 +142,8 @@ public class GoldModel extends GameModel {
 	 * Get next position of the collector.
 	 */
 	private Position getNextCollectorPos() {
-		return new Position(this.collectorPos.getX() + this.direction.getXDelta(), this.collectorPos.getY()
+		return new Position(this.collectorPos.getX()
+				+ this.direction.getXDelta(), this.collectorPos.getY()
 				+ this.direction.getYDelta());
 	}
 
@@ -185,7 +189,7 @@ public class GoldModel extends GameModel {
 	 *         <code>true</code> otherwise.
 	 */
 	private boolean isOutOfBounds(Position pos) {
-		return pos.getX() < 0 || pos.getX() >= getGameboardSize().width || pos.getY() < 0
-				|| pos.getY() >= getGameboardSize().height;
+		return pos.getX() < 0 || pos.getX() >= getGameboardSize().width
+				|| pos.getY() < 0 || pos.getY() >= getGameboardSize().height;
 	}
 }

@@ -38,7 +38,8 @@ public class RectangularTile extends GameTile {
 	 *            size of this object in pixels.
 	 */
 	@Override
-	public void draw(final Graphics g, final int x, final int y, final Dimension d) {
+	public void draw(final Graphics g, final int x, final int y,
+			final Dimension d) {
 		g.setColor(this.color);
 		g.fillRect(x, y, d.width, d.height);
 	}

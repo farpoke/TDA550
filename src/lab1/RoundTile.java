@@ -52,7 +52,8 @@ public class RoundTile extends GameTile {
 	 * @param thickness
 	 *            the thickness of the stroke.
 	 */
-	public RoundTile(final Color strokeColor, final Color fillColor, final double thickness) {
+	public RoundTile(final Color strokeColor, final Color fillColor,
+			final double thickness) {
 		this(strokeColor, fillColor, thickness, 1.0);
 	}
 
@@ -68,7 +69,8 @@ public class RoundTile extends GameTile {
 	 * @param scale
 	 *            size of the circle relative to the tile size.
 	 */
-	public RoundTile(final Color strokeColor, final Color fillColor, final double thickness, final double scale) {
+	public RoundTile(final Color strokeColor, final Color fillColor,
+			final double thickness, final double scale) {
 		this.strokeColor = strokeColor;
 		this.fillColor = fillColor;
 		this.stroke = new BasicStroke((float) thickness);
@@ -88,16 +90,17 @@ public class RoundTile extends GameTile {
 	 *            size of this object in pixels.
 	 */
 	@Override
-	public void draw(final Graphics g, final int x, final int y, final Dimension d) {
+	public void draw(final Graphics g, final int x, final int y,
+			final Dimension d) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(this.fillColor);
 		double xOffset = (d.width * (1.0 - this.scale)) / 2.0;
 		double yOffset = (d.height * (1.0 - this.scale)) / 2.0;
-		g2.fillOval((int) (x + xOffset), (int) (y + yOffset), (int) (d.width - xOffset * 2),
-				(int) (d.height - yOffset * 2));
+		g2.fillOval((int) (x + xOffset), (int) (y + yOffset),
+				(int) (d.width - xOffset * 2), (int) (d.height - yOffset * 2));
 		g2.setStroke(this.stroke);
 		g2.setColor(this.strokeColor);
-		g2.drawOval((int) (x + xOffset), (int) (y + yOffset), (int) (d.width - xOffset * 2),
-				(int) (d.height - yOffset * 2));
+		g2.drawOval((int) (x + xOffset), (int) (y + yOffset),
+				(int) (d.width - xOffset * 2), (int) (d.height - yOffset * 2));
 	}
 }
