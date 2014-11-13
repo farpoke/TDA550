@@ -32,7 +32,7 @@ public class GameController implements Runnable {
 	 */
 	/** The thread which the game runs in. */
 	private Thread gameThread;
-
+	
 	/**
 	 * Creats a new GameContoller associated with supplied view.
 	 */
@@ -52,14 +52,14 @@ public class GameController implements Runnable {
 			}
 		};
 	}
-
+	
 	/**
 	 * Add a key press to the end of the queue
 	 */
 	private synchronized void enqueueKeyPress(final int key) {
 		this.keypresses.add(Integer.valueOf(key));
 	}
-
+	
 	/**
 	 * Get a key press, and remove it from the queue. Returns 0 if no key press
 	 * is available.
@@ -73,7 +73,7 @@ public class GameController implements Runnable {
 		}
 		return this.keypresses.remove(0).intValue();
 	}
-
+	
 	/**
 	 * Starts a new game.
 	 * 
@@ -95,7 +95,7 @@ public class GameController implements Runnable {
 		this.gameThread = new Thread(this);
 		this.gameThread.start();
 	}
-
+	
 	/**
 	 * Stops the currently running game, if any.
 	 */
@@ -119,7 +119,7 @@ public class GameController implements Runnable {
 			}
 		}
 	}
-
+	
 	/**
 	 * This code runs the game in a different thread.
 	 */

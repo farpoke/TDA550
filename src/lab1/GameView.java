@@ -23,14 +23,14 @@ public class GameView extends JComponent {
 	private Graphics offscreenGraphics;
 	/** Image representing the offscreen graphics */
 	private Image offscreenImage;
-
+	
 	/**
 	 * Creates a view where each GameObject has side length 40 pixels..
 	 */
 	public GameView() {
 		this(40);
 	}
-
+	
 	/**
 	 * Creates a view where each GameObject has a given size.
 	 * 
@@ -45,7 +45,7 @@ public class GameView extends JComponent {
 						* tileSide);
 		setPreferredSize(preferredSize);
 	}
-
+	
 	/**
 	 * Updates the view with a new model.
 	 */
@@ -53,7 +53,7 @@ public class GameView extends JComponent {
 		this.model = model;
 		repaint();
 	}
-
+	
 	/**
 	 * This method ensures that the painting is performed double-buffered. This
 	 * means there won't be any flicker when repainting all the time.
@@ -71,7 +71,7 @@ public class GameView extends JComponent {
 		// Draw the contents of the offscreen buffer to screen.
 		g.drawImage(this.offscreenImage, 0, 0, this);
 	}
-
+	
 	/**
 	 * Consults the model to paint the game matrix. If model is null, draws a
 	 * default text.

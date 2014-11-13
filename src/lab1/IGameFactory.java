@@ -9,7 +9,7 @@ public interface IGameFactory {
 	 * list availible games.
 	 */
 	public String[] getGameNames();
-
+	
 	/**
 	 * Returns a new model object for the game corresponding to its Name.
 	 * 

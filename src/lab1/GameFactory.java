@@ -12,7 +12,7 @@ public class GameFactory implements IGameFactory {
 	public String[] getGameNames() {
 		return new String[] { "Gold", "Snake", "No-game" };
 	}
-
+	
 	/**
 	 * Returns a new model object for the game corresponding to its Name.
 	 * 

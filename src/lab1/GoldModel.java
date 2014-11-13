@@ -21,21 +21,21 @@ public class GoldModel extends GameModel {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
 		private final int xDelta;
 		private final int yDelta;
-
+		
 		Directions(final int xDelta, final int yDelta) {
 			this.xDelta = xDelta;
 			this.yDelta = yDelta;
 		}
-
+		
 		public int getXDelta() {
 			return this.xDelta;
 		}
-
+		
 		public int getYDelta() {
 			return this.yDelta;
 		}
 	}
-
+	
 	private static final int COIN_START_AMOUNT = 20;
 	/*
 	 * The following GameTile objects are used only to describe how to paint the
@@ -67,7 +67,7 @@ public class GoldModel extends GameModel {
 	private Directions direction = Directions.NORTH;
 	/** The number of coins found. */
 	private int score;
-
+	
 	/**
 	 * Create a new model for the gold game.
 	 */
@@ -87,7 +87,7 @@ public class GoldModel extends GameModel {
 			addCoin();
 		}
 	}
-
+	
 	/**
 	 * Insert another coin into the gameboard.
 	 */
@@ -103,7 +103,7 @@ public class GoldModel extends GameModel {
 		setGameboardState(newCoinPos, COIN_TILE);
 		this.coins.add(newCoinPos);
 	}
-
+	
 	/**
 	 * Return whether the specified position is empty.
 	 * 
@@ -114,30 +114,30 @@ public class GoldModel extends GameModel {
 	private boolean isPositionEmpty(final Position pos) {
 		return (getGameboardState(pos) == BLANK_TILE);
 	}
-
+	
 	/**
 	 * Update the direction of the collector according to the user's keypress.
 	 */
 	private void updateDirection(final int key) {
 		switch (key) {
-		case KeyEvent.VK_LEFT:
-			this.direction = Directions.WEST;
-			break;
-		case KeyEvent.VK_UP:
-			this.direction = Directions.NORTH;
-			break;
-		case KeyEvent.VK_RIGHT:
-			this.direction = Directions.EAST;
-			break;
-		case KeyEvent.VK_DOWN:
-			this.direction = Directions.SOUTH;
-			break;
-		default:
-			// Don't change direction if another key is pressed
-			break;
+			case KeyEvent.VK_LEFT:
+				this.direction = Directions.WEST;
+				break;
+			case KeyEvent.VK_UP:
+				this.direction = Directions.NORTH;
+				break;
+			case KeyEvent.VK_RIGHT:
+				this.direction = Directions.EAST;
+				break;
+			case KeyEvent.VK_DOWN:
+				this.direction = Directions.SOUTH;
+				break;
+			default:
+				// Don't change direction if another key is pressed
+				break;
 		}
 	}
-
+	
 	/**
 	 * Get next position of the collector.
 	 */
@@ -146,7 +146,7 @@ public class GoldModel extends GameModel {
 				+ this.direction.getXDelta(), this.collectorPos.getY()
 				+ this.direction.getYDelta());
 	}
-
+	
 	/**
 	 * This method is called repeatedly so that the game can update its state.
 	 * 
@@ -180,7 +180,7 @@ public class GoldModel extends GameModel {
 		// Add a new coin (simulating moving one coin)
 		addCoin();
 	}
-
+	
 	/**
 	 * 
 	 * @param pos

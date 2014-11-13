@@ -19,7 +19,7 @@ public class RoundTile extends GameTile {
 	private final Color fillColor;
 	private final Stroke stroke;
 	private final double scale;
-
+	
 	/**
 	 * Creates a circular game tile.
 	 * 
@@ -29,7 +29,7 @@ public class RoundTile extends GameTile {
 	public RoundTile(final Color fillColor) {
 		this(fillColor, fillColor);
 	}
-
+	
 	/**
 	 * Creates a circular game tile with a stroke around it.
 	 * 
@@ -41,7 +41,7 @@ public class RoundTile extends GameTile {
 	public RoundTile(final Color strokeColor, final Color fillColor) {
 		this(strokeColor, fillColor, 1.0);
 	}
-
+	
 	/**
 	 * Creates a circular game tile with a stroke around it.
 	 * 
@@ -56,7 +56,7 @@ public class RoundTile extends GameTile {
 			final double thickness) {
 		this(strokeColor, fillColor, thickness, 1.0);
 	}
-
+	
 	/**
 	 * Creates a circular game tile with a stroke around it.
 	 * 
@@ -76,7 +76,7 @@ public class RoundTile extends GameTile {
 		this.stroke = new BasicStroke((float) thickness);
 		this.scale = scale;
 	}
-
+	
 	/**
 	 * Draws itself in a given graphics context, position and size.
 	 * 

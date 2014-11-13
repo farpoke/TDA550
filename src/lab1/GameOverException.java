@@ -6,7 +6,7 @@ package lab1;
  */
 public class GameOverException extends Exception {
 	private final int score;
-
+	
 	/**
 	 * Constructs a new exception with the final score.
 	 * 
@@ -16,7 +16,7 @@ public class GameOverException extends Exception {
 	public GameOverException(final int score) {
 		this.score = score;
 	}
-
+	
 	/** Get the score of the game */
 	public int getScore() {
 		return this.score;

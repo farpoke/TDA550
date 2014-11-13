@@ -14,7 +14,7 @@ import java.awt.Graphics;
 public class RectangularTile extends GameTile {
 	/** The color of the rectangle */
 	private final Color color;
-
+	
 	/**
 	 * Creates a rectangular game tile.
 	 * 
@@ -24,7 +24,7 @@ public class RectangularTile extends GameTile {
 	public RectangularTile(final Color color) {
 		this.color = color;
 	}
-
+	
 	/**
 	 * Draws itself in a given graphics context, position and size.
 	 * 

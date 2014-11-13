@@ -28,7 +28,7 @@ public class GUIView extends JPanel {
 	private final JPanel guiPanel;
 	/** This is the factory which creates GameModels for us */
 	private final IGameFactory gameFactory;
-
+	
 	/**
 	 * Create a new GUIView. This will create a GameView and a GameController.
 	 * 
@@ -63,7 +63,7 @@ public class GUIView extends JPanel {
 		add(this.gameView, BorderLayout.CENTER);
 		add(this.guiPanel, BorderLayout.SOUTH);
 	}
-
+	
 	/**
 	 * Get a reference to the game controller. Useful if game needs to be
 	 * stopped by some other means, like in stop() in Applet.
@@ -71,7 +71,7 @@ public class GUIView extends JPanel {
 	public GameController getGameController() {
 		return this.gameController;
 	}
-
+	
 	/**
 	 * This inner class will listen for presses on the "Start Game" button. It
 	 * will respond by creating a new game model and starting it using the game
