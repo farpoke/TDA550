@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import lab1.GoldModel.Directions;
+
 public class SnakeModel extends GameModel {
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
@@ -26,7 +28,7 @@ public class SnakeModel extends GameModel {
 		}
 	}
 	
-	private static final int COIN_START_AMOUNT = 20;
+	private static final int COIN_START_AMOUNT = 3;
 	/*
 	 * The following GameTile objects are used only to describe how to paint the
 	 * specified item.
@@ -58,14 +60,13 @@ public class SnakeModel extends GameModel {
 	private int score;
 	/** The positions of the snake. Object 0 indicates the collector */
 	private ArrayList<Position> snakePos = new ArrayList<Position>();
-	/** The directions of the snake. Object 0 indicates the collector */
-	private ArrayList<Directions> snakeDir = new ArrayList<Directions>();
+	/** The direction of the collector. */
+	private Directions direction = Directions.NORTH;
 	
 	/**
 	 * Create a new model for the snake game.
 	 */
 	public SnakeModel() {
-		snakeDir.add(0, Directions.NORTH);
 		Dimension size = getGameboardSize();
 		// Blank out the whole gameboard
 		for (int i = 0; i < size.width; i++) {
@@ -74,7 +75,7 @@ public class SnakeModel extends GameModel {
 			}
 		}
 		// Insert the collector in the middle of the gameboard.
-		snakePos.add(0, new Position(size.width / 2, size.height / 2));
+		snakePos.add(new Position(size.width / 2, size.height / 2));
 		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Insert coins into the gameboard.
 		for (int i = 0; i < COIN_START_AMOUNT; i++) {
@@ -115,16 +116,16 @@ public class SnakeModel extends GameModel {
 	private void updateDirection(final int key) {
 		switch (key) {
 			case KeyEvent.VK_LEFT:
-				snakeDir.set(0, Directions.WEST);
+				direction = Directions.WEST;
 				break;
 			case KeyEvent.VK_UP:
-				snakeDir.set(0, Directions.NORTH);
+				direction = Directions.NORTH;
 				break;
 			case KeyEvent.VK_RIGHT:
-				snakeDir.set(0, Directions.EAST);
+				direction = Directions.EAST;
 				break;
 			case KeyEvent.VK_DOWN:
-				snakeDir.set(0, Directions.SOUTH);
+				direction = Directions.SOUTH;
 				break;
 			default:
 				// Don't change direction if another key is pressed
@@ -136,17 +137,12 @@ public class SnakeModel extends GameModel {
 	 * Get next position of the collector.
 	 */
 	private Position getNextCollectorPos() {
-		return new Position(snakePos.get(0).getX()
-				+ snakeDir.get(0).getXDelta(), snakePos.get(0).getY()
-				+ snakeDir.get(0).getYDelta());
+		return new Position(snakePos.get(0).getX() + direction.getXDelta(),
+				snakePos.get(0).getY() + direction.getYDelta());
 	}
 	
 	private Position getLastPos() {
 		return snakePos.get(snakePos.size() - 1);
-	}
-	
-	private Directions getLastDir() {
-		return snakeDir.get(snakeDir.size() - 1);
 	}
 	
 	/**
@@ -157,29 +153,36 @@ public class SnakeModel extends GameModel {
 	 */
 	@Override
 	public void gameUpdate(final int lastKey) throws GameOverException {
-		updateDirection(lastKey);
-		// Erase the previous position.
-		setGameboardState(snakePos.get(0), BLANK_TILE);
-		// Change collector position.
+		setGameboardState(getLastPos(), BLANK_TILE);updateDirection(lastKey);
 		snakePos.set(0, getNextCollectorPos());
+		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
+		
+			
+		
+		// Change collector position.
 		if (isOutOfBounds(snakePos.get(0))) {
 			throw new GameOverException(this.score);
 		}
-		// Draw collector at new position.
-		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
-		for (int i = 1; i < snakePos.size(); i++) {
-			setGameboardState(snakePos.get(i), TAIL_TILE);
-		}
 		// Remove the coin at the new collector position (if any)
+		// Coin collected
 		if (this.coins.remove(snakePos.get(0))) {
 			this.score++;
-			// TODO add tail at last tail position minus direction
-			snakePos.add(new Position(getLastPos().getX()
-					+ getLastDir().getXDelta(), getLastPos().getY()
-					+ getLastDir().getYDelta()));
-			snakeDir.add(getLastDir());
+			System.out.println(score);
+			snakePos.add(new Position(snakePos.get(0).getX(), snakePos.get(0)
+					.getY()));
 			setGameboardState(getLastPos(), TAIL_TILE);
+			// Coin not collected
 		}
+		snakePos.add(1, snakePos.get(0));
+		snakePos.remove(snakePos.size() - 1);
+		// Draw collector at new position.
+		// Draw tail
+		for (int i = 1; i < snakePos.size(); i++) {
+			setGameboardState(snakePos.get(i), TAIL_TILE);
+			System.out.println(snakePos.get(i).getX() + " "
+					+ snakePos.get(i).getY());
+		}
+		System.out.println("----");
 		// Check if all coins are found
 		if (this.coins.isEmpty()) {
 			throw new GameOverException(this.score + 5);

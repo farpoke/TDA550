@@ -40,7 +40,7 @@ public class GameController implements Runnable {
 		this.view = view;
 		this.gameModel = null;
 		this.isRunning = false;
-		this.updateInterval = 150;
+		this.updateInterval = 1000;
 		this.keypresses = new LinkedList<Integer>();
 		this.gameThread = null;
 		// Create the key listener which will listen for gamekeys
@@ -111,7 +111,7 @@ public class GameController implements Runnable {
 		if (this.gameThread != null) {
 			while (this.gameThread.isAlive()) {
 				try {
-					Thread.sleep(100);
+					Thread.sleep(50);
 				} catch (InterruptedException ie) {
 					// Pass the call on.
 					Thread.currentThread().interrupt();

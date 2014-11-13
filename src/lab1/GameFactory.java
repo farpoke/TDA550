@@ -10,7 +10,7 @@ public class GameFactory implements IGameFactory {
 	 */
 	@Override
 	public String[] getGameNames() {
-		return new String[] { "Gold", "Snake", "No-game" };
+		return new String[] { "Snake", "Gold", "No-game" };
 	}
 	
 	/**
@@ -23,10 +23,10 @@ public class GameFactory implements IGameFactory {
 	 */
 	@Override
 	public GameModel createGame(final String gameName) {
-		if (gameName.equals("Gold")) {
-			return new GoldModel();
-		} else if (gameName.equals("Snake")) {
+		if (gameName.equals("Snake")) {
 			return new SnakeModel();
+		} else if (gameName.equals("Gold")) {
+			return new GoldModel();
 		}
 		throw new IllegalArgumentException("No such game: " + gameName);
 	}
