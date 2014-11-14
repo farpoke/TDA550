@@ -40,7 +40,7 @@ public class GameController implements Runnable {
 		this.view = view;
 		this.gameModel = null;
 		this.isRunning = false;
-		this.updateInterval = 1000;
+		this.updateInterval = 150;
 		this.keypresses = new LinkedList<Integer>();
 		this.gameThread = null;
 		// Create the key listener which will listen for gamekeys
@@ -136,7 +136,10 @@ public class GameController implements Runnable {
 				// we got a game over signal, time to exit...
 				// The current implementation ignores the game score
 				this.isRunning = false;
-				System.out.println("Game over: " + e.getScore());
+				System.out.println("-----");
+				System.out.println("Game over");
+				System.out.println("You got a total score of");
+				System.out.println(e.getScore() + " points");
 			} catch (InterruptedException e) {
 				// if we get this exception, we're asked to terminate ourselves
 				this.isRunning = false;

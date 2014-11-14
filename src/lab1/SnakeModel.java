@@ -6,8 +6,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import lab1.GoldModel.Directions;
-
 public class SnakeModel extends GameModel {
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
@@ -28,7 +26,7 @@ public class SnakeModel extends GameModel {
 		}
 	}
 	
-	private static final int COIN_START_AMOUNT = 3;
+	private static final int COIN_START_AMOUNT = 20;
 	/*
 	 * The following GameTile objects are used only to describe how to paint the
 	 * specified item.
@@ -62,6 +60,7 @@ public class SnakeModel extends GameModel {
 	private ArrayList<Position> snakePos = new ArrayList<Position>();
 	/** The direction of the collector. */
 	private Directions direction = Directions.NORTH;
+	private boolean toAddTail = false;
 	
 	/**
 	 * Create a new model for the snake game.
@@ -145,6 +144,18 @@ public class SnakeModel extends GameModel {
 		return snakePos.get(snakePos.size() - 1);
 	}
 	
+	private boolean crashed(ArrayList<Position> posArray) {
+		for (int i = 0; i < posArray.size(); i++) {
+			for (int j = i + 1; j < posArray.size(); j++) {
+				if (posArray.get(i).getX() == posArray.get(j).getX()
+						&& posArray.get(i).getY() == posArray.get(j).getY()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * This method is called repeatedly so that the game can update its state.
 	 * 
@@ -153,36 +164,36 @@ public class SnakeModel extends GameModel {
 	 */
 	@Override
 	public void gameUpdate(final int lastKey) throws GameOverException {
-		setGameboardState(getLastPos(), BLANK_TILE);updateDirection(lastKey);
+		setGameboardState(getLastPos(), BLANK_TILE);
+		if (toAddTail) {
+			snakePos.add(snakePos.get(snakePos.size() - 1));
+			toAddTail = false;
+		}
+		// move and paint tail
+		snakePos.add(1, snakePos.get(0));
+		snakePos.remove(snakePos.size() - 1);
+		for (int i = 1; i < snakePos.size(); i++) {
+			setGameboardState(snakePos.get(i), TAIL_TILE);
+		}
+		updateDirection(lastKey);
 		snakePos.set(0, getNextCollectorPos());
-		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
-		
-			
-		
-		// Change collector position.
 		if (isOutOfBounds(snakePos.get(0))) {
+			System.out.println("Crashed into wall");
+			throw new GameOverException(this.score);
+		}
+		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
+		// test for crashing into tail
+		if (crashed(snakePos)) {
+			System.out.println("Crashed into self");
 			throw new GameOverException(this.score);
 		}
 		// Remove the coin at the new collector position (if any)
 		// Coin collected
 		if (this.coins.remove(snakePos.get(0))) {
 			this.score++;
-			System.out.println(score);
-			snakePos.add(new Position(snakePos.get(0).getX(), snakePos.get(0)
-					.getY()));
-			setGameboardState(getLastPos(), TAIL_TILE);
+			toAddTail = true;
 			// Coin not collected
 		}
-		snakePos.add(1, snakePos.get(0));
-		snakePos.remove(snakePos.size() - 1);
-		// Draw collector at new position.
-		// Draw tail
-		for (int i = 1; i < snakePos.size(); i++) {
-			setGameboardState(snakePos.get(i), TAIL_TILE);
-			System.out.println(snakePos.get(i).getX() + " "
-					+ snakePos.get(i).getY());
-		}
-		System.out.println("----");
 		// Check if all coins are found
 		if (this.coins.isEmpty()) {
 			throw new GameOverException(this.score + 5);
