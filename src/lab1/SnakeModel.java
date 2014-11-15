@@ -6,6 +6,16 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Sample game for illustration. Intentionally stupid; more interesting games to
+ * be provided by students.
+ * <p>
+ * Initially 20 gold coins are randomly placed in the matrix. The red gold
+ * collector aims to collect these coins which disappear after collection. Each
+ * coin is randomly moved to a new position every n moves, where n is the number
+ * of remaining coins. The game is won when all coins are collected and lost
+ * when collector leaves game board.
+ */
 public class SnakeModel extends GameModel {
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
@@ -54,12 +64,12 @@ public class SnakeModel extends GameModel {
 	 * warning at compilation "Position" in this case is the type of the objects
 	 * that are going to be used in the List
 	 */
-	/** The number of coins found. */
-	private int score;
 	/** The positions of the snake. Object 0 indicates the collector */
 	private ArrayList<Position> snakePos = new ArrayList<Position>();
 	/** The direction of the collector. */
 	private Directions direction = Directions.NORTH;
+	/** The number of coins found. */
+	private int score;
 	private boolean toAddTail = false;
 	
 	/**
@@ -140,10 +150,19 @@ public class SnakeModel extends GameModel {
 				snakePos.get(0).getY() + direction.getYDelta());
 	}
 	
+	/**
+	 * Get the last position in a position ListArray
+	 */
 	private Position getLastPos() {
 		return snakePos.get(snakePos.size() - 1);
 	}
 	
+	/**
+	 * This method returns true when a collision is found and false when not.
+	 * 
+	 * @param posArray
+	 *            ArrayList containing the Positions to look for collisions at.
+	 */
 	private boolean crashed(ArrayList<Position> posArray) {
 		for (int i = 0; i < posArray.size(); i++) {
 			for (int j = i + 1; j < posArray.size(); j++) {
@@ -164,35 +183,39 @@ public class SnakeModel extends GameModel {
 	 */
 	@Override
 	public void gameUpdate(final int lastKey) throws GameOverException {
+		updateDirection(lastKey);
+		// Erase the previous position.
 		setGameboardState(getLastPos(), BLANK_TILE);
-		if (toAddTail) {
-			snakePos.add(snakePos.get(snakePos.size() - 1));
-			toAddTail = false;
-		}
-		// move and paint tail
+		// Move tail
 		snakePos.add(1, snakePos.get(0));
 		snakePos.remove(snakePos.size() - 1);
-		for (int i = 1; i < snakePos.size(); i++) {
-			setGameboardState(snakePos.get(i), TAIL_TILE);
-		}
-		updateDirection(lastKey);
+		// Change collector position.
 		snakePos.set(0, getNextCollectorPos());
+		// Test for crashing into wall
 		if (isOutOfBounds(snakePos.get(0))) {
 			System.out.println("Crashed into wall");
 			throw new GameOverException(this.score);
 		}
-		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
-		// test for crashing into tail
+		// Test for crashing into tail.
 		if (crashed(snakePos)) {
 			System.out.println("Crashed into self");
 			throw new GameOverException(this.score);
 		}
+		// Draw collector at new position.
+		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
+		// Add tail if needed
+		if (toAddTail) {
+			snakePos.add(snakePos.get(snakePos.size() - 1));
+			toAddTail = false;
+		}
+		// Draw tail
+		for (int i = 1; i < snakePos.size(); i++) {
+			setGameboardState(snakePos.get(i), TAIL_TILE);
+		}
 		// Remove the coin at the new collector position (if any)
-		// Coin collected
 		if (this.coins.remove(snakePos.get(0))) {
 			this.score++;
 			toAddTail = true;
-			// Coin not collected
 		}
 		// Check if all coins are found
 		if (this.coins.isEmpty()) {

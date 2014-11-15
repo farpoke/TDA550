@@ -136,10 +136,10 @@ public class GameController implements Runnable {
 				// we got a game over signal, time to exit...
 				// The current implementation ignores the game score
 				this.isRunning = false;
-				System.out.println("-----");
 				System.out.println("Game over");
 				System.out.println("You got a total score of");
 				System.out.println(e.getScore() + " points");
+				System.out.println("-----");
 			} catch (InterruptedException e) {
 				// if we get this exception, we're asked to terminate ourselves
 				this.isRunning = false;
