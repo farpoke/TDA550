@@ -111,7 +111,7 @@ public class GameController implements Runnable {
 		if (this.gameThread != null) {
 			while (this.gameThread.isAlive()) {
 				try {
-					Thread.sleep(50);
+					Thread.sleep(100);
 				} catch (InterruptedException ie) {
 					// Pass the call on.
 					Thread.currentThread().interrupt();

@@ -21,22 +21,21 @@ public class SnakeModel extends GameModel {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
 		private final int xDelta;
 		private final int yDelta;
-		
+
 		Directions(final int xDelta, final int yDelta) {
 			this.xDelta = xDelta;
 			this.yDelta = yDelta;
 		}
-		
+
 		public int getXDelta() {
 			return this.xDelta;
 		}
-		
+
 		public int getYDelta() {
 			return this.yDelta;
 		}
 	}
-	
-	private static final int COIN_START_AMOUNT = 20;
+
 	/*
 	 * The following GameTile objects are used only to describe how to paint the
 	 * specified item.
@@ -55,8 +54,10 @@ public class SnakeModel extends GameModel {
 			Color.BLACK, 2.0);
 	/** Graphical representation of a blank tile. */
 	private static final GameTile BLANK_TILE = new GameTile();
-	/** A list containing the positions of all coins. */
-	private final List<Position> coins = new ArrayList<Position>();
+
+    /** The current position of the coin. */
+    private Position cointPosition = null;
+
 	/*
 	 * The declaration and object creation above uses the new language feature
 	 * 'generic types'. It can be declared in the old way like this: private
@@ -86,26 +87,39 @@ public class SnakeModel extends GameModel {
 		// Insert the collector in the middle of the gameboard.
 		snakePos.add(new Position(size.width / 2, size.height / 2));
 		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
-		// Insert coins into the gameboard.
-		for (int i = 0; i < COIN_START_AMOUNT; i++) {
-			addCoin();
-		}
+		// Place the coin on the gameboard.
+		placeCoin();
 	}
 	
 	/**
-	 * Insert another coin into the gameboard.
+	 * Place the coin in an empty position on the gameboard.
+     *
+     * @return true if the coin was placed or false if the board is full.
 	 */
-	private void addCoin() {
-		Position newCoinPos;
+	private boolean placeCoin() {
+		Position newCoinPos = null;
 		Dimension size = getGameboardSize();
-		// Loop until a blank position is found and ...
-		do {
-			newCoinPos = new Position((int) (Math.random() * size.width),
-					(int) (Math.random() * size.height));
-		} while (!isPositionEmpty(newCoinPos));
-		// ... add a new coin to the empty tile.
-		setGameboardState(newCoinPos, COIN_TILE);
-		this.coins.add(newCoinPos);
+        // Iterate over the board and randomly select an empty spot.
+        int emptyCount = 0;
+        for (int x = 0; x < size.width; x++) {
+            for (int y = 0; y < size.height; y++) {
+                Position currentPos = new Position(x, y);
+                if (!isPositionEmpty(currentPos))
+                    continue; // Ignore filled cells.
+                emptyCount++;
+                if (newCoinPos == null || (Math.random() < 1.0/emptyCount))
+                    newCoinPos = currentPos;
+            }
+        }
+        // Did we find an empty spot?
+        if (newCoinPos == null) {
+            return false; // No.
+        } else {
+            // Yes, place coin.
+            setGameboardState(newCoinPos, COIN_TILE);
+            cointPosition = newCoinPos;
+            return true;
+        }
 	}
 	
 	/**
@@ -183,14 +197,19 @@ public class SnakeModel extends GameModel {
 	 */
 	@Override
 	public void gameUpdate(final int lastKey) throws GameOverException {
+        // Respond to key presses.
 		updateDirection(lastKey);
-		// Erase the previous position.
-		setGameboardState(getLastPos(), BLANK_TILE);
-		// Move tail
+        // Draw snake one step forward.
+        setGameboardState(getLastPos(), BLANK_TILE);
+        if (snakePos.size() > 1)
+            setGameboardState(snakePos.get(0), TAIL_TILE);
+        // Move snake forward one step.
 		snakePos.add(1, snakePos.get(0));
 		snakePos.remove(snakePos.size() - 1);
 		// Change collector position.
 		snakePos.set(0, getNextCollectorPos());
+        // Draw collector at new position.
+        setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Test for crashing into wall
 		if (isOutOfBounds(snakePos.get(0))) {
 			System.out.println("Crashed into wall");
@@ -201,32 +220,21 @@ public class SnakeModel extends GameModel {
 			System.out.println("Crashed into self");
 			throw new GameOverException(this.score);
 		}
-		// Draw collector at new position.
-		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Add tail if needed
 		if (toAddTail) {
 			snakePos.add(snakePos.get(snakePos.size() - 1));
 			toAddTail = false;
 		}
-		// Draw tail
-		for (int i = 1; i < snakePos.size(); i++) {
-			setGameboardState(snakePos.get(i), TAIL_TILE);
-		}
-		// Remove the coin at the new collector position (if any)
-		if (this.coins.remove(snakePos.get(0))) {
+		// Check if the coin was collected.
+		if (snakePos.get(0).equals(cointPosition)) {
 			this.score++;
 			toAddTail = true;
+            // Replace coin if possible, or end game.
+            if (!placeCoin()) {
+                System.out.println("You won!");
+                throw new GameOverException(this.score);
+            }
 		}
-		// Check if all coins are found
-		if (this.coins.isEmpty()) {
-			throw new GameOverException(this.score + 5);
-		}
-		// Remove one of the coins
-		Position oldCoinPos = this.coins.get(0);
-		this.coins.remove(0);
-		setGameboardState(oldCoinPos, BLANK_TILE);
-		// Add a new coin (simulating moving one coin)
-		addCoin();
 	}
 	
 	/**
