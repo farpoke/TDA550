@@ -4,19 +4,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Sample game for illustration. Intentionally stupid; more interesting games to
- * be provided by students.
- * <p>
- * Initially 20 gold coins are randomly placed in the matrix. The red gold
- * collector aims to collect these coins which disappear after collection. Each
- * coin is randomly moved to a new position every n moves, where n is the number
- * of remaining coins. The game is won when all coins are collected and lost
- * when collector leaves game board.
+ * Simple Snake game.
+ *
+ * The player controls a snake and attempts to collect coins, causing the
+ * snake to grow until it hits the wall or itself, or runs out of space.
  */
 public class SnakeModel extends GameModel {
+
+    /**
+     * Simple enumeration describing the possible directions the snake can travel in.
+     */
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
 		private final int xDelta;
@@ -55,23 +54,16 @@ public class SnakeModel extends GameModel {
 	/** Graphical representation of a blank tile. */
 	private static final GameTile BLANK_TILE = new GameTile();
 
-    /** The current position of the coin. */
-    private Position cointPosition = null;
-
-	/*
-	 * The declaration and object creation above uses the new language feature
-	 * 'generic types'. It can be declared in the old way like this: private
-	 * java.util.List coins = new ArrayList(); This will however result in a
-	 * warning at compilation "Position" in this case is the type of the objects
-	 * that are going to be used in the List
-	 */
 	/** The positions of the snake. Object 0 indicates the collector */
 	private ArrayList<Position> snakePos = new ArrayList<Position>();
 	/** The direction of the collector. */
 	private Directions direction = Directions.NORTH;
+    /** Flag indicating if a tail piece should be added on the next update. */
+    private boolean toAddTail = false;
+    /** The current position of the coin. */
+    private Position cointPosition = null;
 	/** The number of coins found. */
 	private int score;
-	private boolean toAddTail = false;
 	
 	/**
 	 * Create a new model for the snake game.
@@ -165,13 +157,6 @@ public class SnakeModel extends GameModel {
 	}
 	
 	/**
-	 * Get the last position in a position ListArray
-	 */
-	private Position getLastPos() {
-		return snakePos.get(snakePos.size() - 1);
-	}
-	
-	/**
 	 * This method returns true when a collision is found and false when not.
 	 * 
 	 * @param posArray
@@ -199,31 +184,32 @@ public class SnakeModel extends GameModel {
 	public void gameUpdate(final int lastKey) throws GameOverException {
         // Respond to key presses.
 		updateDirection(lastKey);
-        // Draw snake one step forward.
-        setGameboardState(getLastPos(), BLANK_TILE);
-        if (snakePos.size() > 1)
-            setGameboardState(snakePos.get(0), TAIL_TILE);
         // Move snake forward one step.
 		snakePos.add(1, snakePos.get(0));
-		snakePos.remove(snakePos.size() - 1);
+        // Remove tail piece, unless we wish to keep it.
+        if (!toAddTail) {
+            int lastIndex = snakePos.size() - 1;
+            setGameboardState(snakePos.get(lastIndex), BLANK_TILE);
+            snakePos.remove(lastIndex);
+        } else {
+            toAddTail = false;
+        }
 		// Change collector position.
 		snakePos.set(0, getNextCollectorPos());
-        // Draw collector at new position.
-        setGameboardState(snakePos.get(0), COLLECTOR_TILE);
+        // Replace previous collector position with tail piece if appropriate.
+        if (snakePos.size() > 1)
+            setGameboardState(snakePos.get(1), TAIL_TILE);
 		// Test for crashing into wall
 		if (isOutOfBounds(snakePos.get(0))) {
 			System.out.println("Crashed into wall");
 			throw new GameOverException(this.score);
 		}
+        // Draw collector at new position.
+        setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Test for crashing into tail.
 		if (crashed(snakePos)) {
 			System.out.println("Crashed into self");
 			throw new GameOverException(this.score);
-		}
-		// Add tail if needed
-		if (toAddTail) {
-			snakePos.add(snakePos.get(snakePos.size() - 1));
-			toAddTail = false;
 		}
 		// Check if the coin was collected.
 		if (snakePos.get(0).equals(cointPosition)) {
@@ -238,6 +224,7 @@ public class SnakeModel extends GameModel {
 	}
 	
 	/**
+     * Check if the specified position is out of bounds.
 	 * 
 	 * @param pos
 	 *            The position to test.
