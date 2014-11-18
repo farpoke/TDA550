@@ -7,15 +7,16 @@ import java.util.ArrayList;
 
 /**
  * Simple Snake game.
- *
- * The player controls a snake and attempts to collect coins, causing the
- * snake to grow until it hits the wall or itself, or runs out of space.
+ * 
+ * The player controls a snake and attempts to collect coins, causing the snake
+ * to grow until it hits the wall or itself, or runs out of space.
  */
 public class SnakeModel extends GameModel {
 
-    /**
-     * Simple enumeration describing the possible directions the snake can travel in.
-     */
+	/**
+	 * Simple enumeration describing the possible directions the snake can
+	 * travel in.
+	 */
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
 		private final int xDelta;
@@ -58,13 +59,13 @@ public class SnakeModel extends GameModel {
 	private ArrayList<Position> snakePos = new ArrayList<Position>();
 	/** The direction of the collector. */
 	private Directions direction = Directions.NORTH;
-    /** Flag indicating if a tail piece should be added on the next update. */
-    private boolean toAddTail = false;
-    /** The current position of the coin. */
-    private Position cointPosition = null;
+	/** Flag indicating if a tail piece should be added on the next update. */
+	private boolean toAddTail = false;
+	/** The current position of the coin. */
+	private Position cointPosition = null;
 	/** The number of coins found. */
 	private int score;
-	
+
 	/**
 	 * Create a new model for the snake game.
 	 */
@@ -82,72 +83,67 @@ public class SnakeModel extends GameModel {
 		// Place the coin on the gameboard.
 		placeCoin();
 	}
-	
+
 	/**
 	 * Place the coin in an empty position on the gameboard.
-     *
-     * @return true if the coin was placed or false if the board is full.
+	 * 
+	 * @return true if the coin was placed or false if the board is full.
 	 */
 	private boolean placeCoin() {
 		Position newCoinPos = null;
 		Dimension size = getGameboardSize();
-        // Iterate over the board and randomly select an empty spot.
-        int emptyCount = 0;
-        for (int x = 0; x < size.width; x++) {
-            for (int y = 0; y < size.height; y++) {
-                Position currentPos = new Position(x, y);
-                if (!isPositionEmpty(currentPos))
-                    continue; // Ignore filled cells.
-                emptyCount++;
-                if (newCoinPos == null || (Math.random() < 1.0/emptyCount))
-                    newCoinPos = currentPos;
-            }
-        }
-        // Did we find an empty spot?
-        if (newCoinPos == null) {
-            return false; // No.
-        } else {
-            // Yes, place coin.
-            setGameboardState(newCoinPos, COIN_TILE);
-            cointPosition = newCoinPos;
-            return true;
-        }
+		// Iterate over the board and randomly select an empty spot.
+		int emptyCount = 0;
+		for (int x = 0; x < size.width; x++) {
+			for (int y = 0; y < size.height; y++) {
+				// Only look at blank cell.
+				if (getGameboardState(x, y) != BLANK_TILE)
+					continue;
+				// Randomly select blank cell.
+				emptyCount++;
+				if (newCoinPos == null || (Math.random() < 1.0 / emptyCount))
+					newCoinPos = new Position(x, y);
+			}
+		}
+		// Did we find an empty spot?
+		if (newCoinPos == null) {
+			return false; // No.
+		} else {
+			// Yes, place coin.
+			setGameboardState(newCoinPos, COIN_TILE);
+			cointPosition = newCoinPos;
+			return true;
+		}
 	}
-	
-	/**
-	 * Return whether the specified position is empty.
-	 * 
-	 * @param pos
-	 *            The position to test.
-	 * @return true if position is empty.
-	 */
-	private boolean isPositionEmpty(final Position pos) {
-		return (getGameboardState(pos) == BLANK_TILE);
-	}
-	
+
 	/**
 	 * Update the direction of the collector according to the user's keypress.
+	 * Does not allow 180-degree turns.
 	 */
 	private void updateDirection(final int key) {
 		switch (key) {
-			case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_LEFT:
+			if (direction != Directions.EAST)
 				direction = Directions.WEST;
-				break;
-			case KeyEvent.VK_UP:
+			break;
+		case KeyEvent.VK_UP:
+			if (direction != Directions.SOUTH)
 				direction = Directions.NORTH;
-				break;
-			case KeyEvent.VK_RIGHT:
+			break;
+		case KeyEvent.VK_RIGHT:
+			if (direction != Directions.WEST)
 				direction = Directions.EAST;
-				break;
-			case KeyEvent.VK_DOWN:
+			break;
+		case KeyEvent.VK_DOWN:
+			if (direction != Directions.NORTH)
 				direction = Directions.SOUTH;
-				break;
-			default:
-				// Don't change direction if another key is pressed
-				break;
+			break;
+		default:
+			// Don't change direction if another key is pressed
+			break;
 		}
 	}
-	
+
 	/**
 	 * Get next position of the collector.
 	 */
@@ -155,7 +151,7 @@ public class SnakeModel extends GameModel {
 		return new Position(snakePos.get(0).getX() + direction.getXDelta(),
 				snakePos.get(0).getY() + direction.getYDelta());
 	}
-	
+
 	/**
 	 * This method is called repeatedly so that the game can update its state.
 	 * 
@@ -164,23 +160,23 @@ public class SnakeModel extends GameModel {
 	 */
 	@Override
 	public void gameUpdate(final int lastKey) throws GameOverException {
-        // Respond to key presses.
+		// Respond to key presses.
 		updateDirection(lastKey);
-        // Move snake forward one step.
+		// Move snake forward one step.
 		snakePos.add(1, snakePos.get(0));
-        // Remove tail piece, unless we wish to keep it.
-        if (!toAddTail) {
-            int lastIndex = snakePos.size() - 1;
-            setGameboardState(snakePos.get(lastIndex), BLANK_TILE);
-            snakePos.remove(lastIndex);
-        } else {
-            toAddTail = false;
-        }
+		// Remove tail piece, unless we wish to keep it.
+		if (!toAddTail) {
+			int lastIndex = snakePos.size() - 1;
+			setGameboardState(snakePos.get(lastIndex), BLANK_TILE);
+			snakePos.remove(lastIndex);
+		} else {
+			toAddTail = false;
+		}
 		// Change collector position.
 		snakePos.set(0, getNextCollectorPos());
-        // Replace previous collector position with tail piece if appropriate.
-        if (snakePos.size() > 1)
-            setGameboardState(snakePos.get(1), TAIL_TILE);
+		// Replace previous collector position with tail piece if appropriate.
+		if (snakePos.size() > 1)
+			setGameboardState(snakePos.get(1), TAIL_TILE);
 		// Test for crashing into wall
 		if (isOutOfBounds(snakePos.get(0))) {
 			System.out.println("Crashed into wall");
@@ -191,22 +187,22 @@ public class SnakeModel extends GameModel {
 			System.out.println("Crashed into self");
 			throw new GameOverException(this.score);
 		}
-        // Draw collector at new position.
-        setGameboardState(snakePos.get(0), COLLECTOR_TILE);
+		// Draw collector at new position.
+		setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Check if the coin was collected.
 		if (snakePos.get(0).equals(cointPosition)) {
 			this.score++;
 			toAddTail = true;
-            // Replace coin if possible, or end game.
-            if (!placeCoin()) {
-                System.out.println("You won!");
-                throw new GameOverException(this.score);
-            }
+			// Replace coin if possible, or end game.
+			if (!placeCoin()) {
+				System.out.println("You won!");
+				throw new GameOverException(this.score);
+			}
 		}
 	}
-	
+
 	/**
-     * Check if the specified position is out of bounds.
+	 * Check if the specified position is out of bounds.
 	 * 
 	 * @param pos
 	 *            The position to test.
