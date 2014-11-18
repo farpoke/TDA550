@@ -157,24 +157,6 @@ public class SnakeModel extends GameModel {
 	}
 	
 	/**
-	 * This method returns true when a collision is found and false when not.
-	 * 
-	 * @param posArray
-	 *            ArrayList containing the Positions to look for collisions at.
-	 */
-	private boolean crashed(ArrayList<Position> posArray) {
-		for (int i = 0; i < posArray.size(); i++) {
-			for (int j = i + 1; j < posArray.size(); j++) {
-				if (posArray.get(i).getX() == posArray.get(j).getX()
-						&& posArray.get(i).getY() == posArray.get(j).getY()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * This method is called repeatedly so that the game can update its state.
 	 * 
 	 * @param lastKey
@@ -204,13 +186,13 @@ public class SnakeModel extends GameModel {
 			System.out.println("Crashed into wall");
 			throw new GameOverException(this.score);
 		}
-        // Draw collector at new position.
-        setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Test for crashing into tail.
-		if (crashed(snakePos)) {
+		if (getGameboardState(snakePos.get(0)) == TAIL_TILE) {
 			System.out.println("Crashed into self");
 			throw new GameOverException(this.score);
 		}
+        // Draw collector at new position.
+        setGameboardState(snakePos.get(0), COLLECTOR_TILE);
 		// Check if the coin was collected.
 		if (snakePos.get(0).equals(cointPosition)) {
 			this.score++;
