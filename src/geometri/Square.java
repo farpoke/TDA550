@@ -7,11 +7,10 @@ import java.awt.Graphics;
  * Implementation of GeometricalForm that describes a square.
  */
 public class Square implements GeometricalForm {
-
 	private int x, y;
 	private int side;
 	private Color color;
-
+	
 	/**
 	 * Construct a square with the given position, side length and color.
 	 * 
@@ -28,8 +27,12 @@ public class Square implements GeometricalForm {
 	 */
 	public Square(int x, int y, int side, Color c)
 			throws IllegalPositionException {
+		this.x = x;
+		this.y = y;
+		this.side = side;
+		this.color = c;
 	}
-
+	
 	/**
 	 * Construct a square with the same position as a given GeometricalForm, and
 	 * the given side length and color.
@@ -42,91 +45,106 @@ public class Square implements GeometricalForm {
 	 *            The color of the square.
 	 */
 	public Square(GeometricalForm f, int side, Color c) {
+		this.x = f.getX();
+		this.y = f.getY();
+		this.side = side;
+		this.color = c;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getArea() {
-		return 0;
+		return side ^ 2;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int compareTo(GeometricalForm f) {
-		return 0;
+		int areaDiff = getArea() - f.getArea();
+		if (areaDiff != 0)
+			return areaDiff;
+		else
+			return getPerimeter() - f.getPerimeter();
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public void fill(Graphics g) {
+		g.setColor(color);
+		g.fillRect(x, y, side, side);
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public Color getColor() {
-		return null;
+		return color;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getWidth() {
-		return 0;
+		return side;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getHeight() {
-		return 0;
+		return side;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getX() {
-		return 0;
+		return x;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getY() {
-		return 0;
+		return y;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public void move(int dx, int dy) throws IllegalPositionException {
+		place(x + dx, y + dy);
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getPerimeter() {
-		return 0;
+		return 4 * side;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public void place(int x, int y) throws IllegalPositionException {
+		if (x < 0 || y < 0)
+			throw new IllegalPositionException(String.format(
+					"Illegal position (%d; %d)", x, y));
+		this.x = x;
+		this.y = y;
 	}
-
 }
