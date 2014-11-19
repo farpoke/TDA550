@@ -30,6 +30,10 @@ public class Oval implements GeometricalForm {
 	 */
 	public Oval(int x, int y, int width, int height, Color c)
 			throws IllegalPositionException {
+		place(x, y); // IllegalPositionException on negative coordinates.
+		this.width = width;
+		this.height = height;
+		this.color = c;
 	}
 
 	/**
@@ -46,6 +50,11 @@ public class Oval implements GeometricalForm {
 	 *            The color of the oval.
 	 */
 	public Oval(GeometricalForm f, int width, int height, Color c) {
+		x = f.getX();
+		y = f.getY();
+		this.width = width;
+		this.height = height;
+		this.color = c;
 	}
 
 	/**
@@ -53,7 +62,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int getArea() {
-		return 0;
+		return (int) Math.round(Math.PI * width * height / 4.0);
 	}
 
 	/**
@@ -61,7 +70,11 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int compareTo(GeometricalForm f) {
-		return 0;
+		int areaDiff = getArea() - f.getArea();
+		if (areaDiff != 0)
+			return areaDiff;
+		else
+			return getPerimeter() - f.getPerimeter();
 	}
 
 	/**
@@ -69,6 +82,8 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public void fill(Graphics g) {
+		g.setColor(color);
+		g.fillOval(x, y, width, height);
 	}
 
 	/**
@@ -76,7 +91,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public Color getColor() {
-		return null;
+		return color;
 	}
 
 	/**
@@ -84,7 +99,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int getWidth() {
-		return 0;
+		return width;
 	}
 
 	/**
@@ -92,7 +107,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int getHeight() {
-		return 0;
+		return height;
 	}
 
 	/**
@@ -100,7 +115,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int getX() {
-		return 0;
+		return x;
 	}
 
 	/**
@@ -108,7 +123,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int getY() {
-		return 0;
+		return y;
 	}
 
 	/**
@@ -116,6 +131,7 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public void move(int dx, int dy) throws IllegalPositionException {
+		place(x + dx, y + dy);
 	}
 
 	/**
@@ -123,7 +139,14 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public int getPerimeter() {
-		return 0;
+		// Semi-major axis, named a by convention.
+		double a = Math.max(width, height) / 2.0;
+		// Semi-minor axis, named b by convention.
+		double b = Math.min(width, height) / 2.0;
+		// Compute approximate perimeter using formula by Ramanujan
+		double h = (a - b) * (a - b) / ((a + b) * (a + b));
+		double c = Math.PI * (a + b) * (1 - 3 * h / (10 + Math.sqrt(4 - 3*h)));
+		return (int)Math.round(c);
 	}
 
 	/**
@@ -131,6 +154,11 @@ public class Oval implements GeometricalForm {
 	 */
 	@Override
 	public void place(int x, int y) throws IllegalPositionException {
+		if (x < 0 || y < 0)
+			throw new IllegalPositionException(String.format(
+					"Illegal position (%d; %d)", x, y));
+		this.x = x;
+		this.y = y;
 	}
 
 }
