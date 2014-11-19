@@ -29,6 +29,9 @@ public class Circle implements GeometricalForm {
 	 */
 	public Circle(int x, int y, int diameter, Color c)
 			throws IllegalPositionException {
+		place(x, y); // Throws IllegalPositionException on negative coordinates.
+		this.diameter = diameter;
+		this.color = c;
 	}
 
 	/**
@@ -43,6 +46,11 @@ public class Circle implements GeometricalForm {
 	 *            The color of the circle.
 	 */
 	public Circle(GeometricalForm f, int diameter, Color c) {
+		// f is guaranteed to have valid coordinates by contract.
+		x = f.getX();
+		y = f.getY();
+		this.diameter = diameter;
+		this.color = c;
 	}
 
 	/**
@@ -50,7 +58,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int getArea() {
-		return 0;
+		return (int)Math.round(Math.PI * this.diameter * this.diameter / 4.0);
 	}
 
 	/**
@@ -58,7 +66,11 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int compareTo(GeometricalForm f) {
-		return 0;
+		int areaDiff = getArea() - f.getArea();
+		if (areaDiff != 0)
+			return areaDiff;
+		else
+			return getPerimeter() - f.getPerimeter();
 	}
 
 	/**
@@ -66,6 +78,8 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public void fill(Graphics g) {
+		g.setColor(color);
+		g.fillOval(x, y, diameter, diameter);
 	}
 
 	/**
@@ -73,7 +87,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public Color getColor() {
-		return null;
+		return color;
 	}
 
 	/**
@@ -81,7 +95,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int getWidth() {
-		return 0;
+		return diameter;
 	}
 
 	/**
@@ -89,7 +103,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int getHeight() {
-		return 0;
+		return diameter;
 	}
 
 	/**
@@ -97,7 +111,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int getX() {
-		return 0;
+		return x;
 	}
 
 	/**
@@ -105,7 +119,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int getY() {
-		return 0;
+		return y;
 	}
 
 	/**
@@ -113,6 +127,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public void move(int dx, int dy) throws IllegalPositionException {
+		place(x + dx, y + dy);
 	}
 
 	/**
@@ -120,7 +135,7 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public int getPerimeter() {
-		return 0;
+		return (int)Math.round(Math.PI * diameter);
 	}
 
 	/**
@@ -128,6 +143,10 @@ public class Circle implements GeometricalForm {
 	 */
 	@Override
 	public void place(int x, int y) throws IllegalPositionException {
+		if (x < 0 || y < 0)
+			throw new IllegalPositionException(String.format("Illegal position (%i; %i)", x, y));
+		this.x = x;
+		this.y = y;
 	}
 
 }
