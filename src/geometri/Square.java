@@ -56,7 +56,7 @@ public class Square implements GeometricalForm {
 	 */
 	@Override
 	public int getArea() {
-		return side ^ 2;
+		return side * side;
 	}
 	
 	/**

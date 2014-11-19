@@ -56,11 +56,12 @@ public class Point implements GeometricalForm {
 	 */
 	@Override
 	public int compareTo(GeometricalForm f) {
-		int areaDiff = getArea() - f.getArea();
-		if (areaDiff != 0)
-			return areaDiff;
+		if (f.getArea() > 0)
+			return -1;
+		else if (f.getPerimeter() > 0)
+			return -1;
 		else
-			return getPerimeter() - f.getPerimeter();
+			return 0;
 	}
 	
 	/**
@@ -69,9 +70,7 @@ public class Point implements GeometricalForm {
 	@Override
 	public void fill(Graphics g) {
 		g.setColor(color);
-		int[] xA = new int[] { x };
-		int[] yA = new int[] { y };
-		g.fillPolygon(xA, yA, 1);
+		g.fillRect(x, y, 1, 1);
 	}
 	
 	/**
