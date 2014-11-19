@@ -139,6 +139,7 @@ public class Line implements GeometricalForm {
 	 */
 	@Override
 	public void move(int dx, int dy) throws IllegalPositionException {
+		place(getX() + dx, getY() + dy);
 	}
 
 	/**
@@ -148,7 +149,7 @@ public class Line implements GeometricalForm {
 	public int getPerimeter() {
 		int dx = x1 - x2;
 		int dy = y1 - y2;
-		return (int)Math.round(Math.sqrt(dx * dx + dy * dy));
+		return (int) Math.round(Math.sqrt(dx * dx + dy * dy));
 	}
 
 	/**
@@ -156,6 +157,19 @@ public class Line implements GeometricalForm {
 	 */
 	@Override
 	public void place(int x, int y) throws IllegalPositionException {
+		// Check that the given point is valid.
+		if (x < 0 || y < 0)
+			throw new IllegalPositionException(String.format(
+					"Illegal position (%d; %d)", x, y));
+		// Compute amount needed to move to place the upper left corner at the
+		// given point.
+		int moveX = x - getX();
+		int moveY = y - getY();
+		// Move endpoints.
+		x1 += moveX;
+		y1 += moveY;
+		x2 += moveX;
+		y2 += moveY;
 	}
 
 }
