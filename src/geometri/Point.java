@@ -7,10 +7,9 @@ import java.awt.Graphics;
  * Implementation of GeometricalForm that describes a point.
  */
 public class Point implements GeometricalForm {
-
 	private int x, y;
 	private Color color;
-
+	
 	/**
 	 * Construct a point with the given position and color.
 	 * 
@@ -24,8 +23,11 @@ public class Point implements GeometricalForm {
 	 *             Thrown if any of the coordinates are negative.
 	 */
 	public Point(int x, int y, Color c) throws IllegalPositionException {
+		this.x = x;
+		this.y = y;
+		this.color = c;
 	}
-
+	
 	/**
 	 * Construct a point with the same position as the given GeometricalForm,
 	 * and the given color.
@@ -36,8 +38,11 @@ public class Point implements GeometricalForm {
 	 *            The color of the point.
 	 */
 	public Point(GeometricalForm f, Color c) {
+		this.x = f.getX();
+		this.y = f.getY();
+		this.color = c;
 	}
-
+	
 	/**
 	 * The area of a point is defined as zero.
 	 */
@@ -45,30 +50,38 @@ public class Point implements GeometricalForm {
 	public int getArea() {
 		return 0;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int compareTo(GeometricalForm f) {
-		return 0;
+		int areaDiff = getArea() - f.getArea();
+		if (areaDiff != 0)
+			return areaDiff;
+		else
+			return getPerimeter() - f.getPerimeter();
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public void fill(Graphics g) {
+		g.setColor(color);
+		int[] xA = new int[] { x };
+		int[] yA = new int[] { y };
+		g.fillPolygon(xA, yA, 1);
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public Color getColor() {
-		return null;
+		return color;
 	}
-
+	
 	/**
 	 * The width of a point is defined as zero.
 	 */
@@ -76,7 +89,7 @@ public class Point implements GeometricalForm {
 	public int getWidth() {
 		return 0;
 	}
-
+	
 	/**
 	 * The height of a point is defined as zero.
 	 */
@@ -84,30 +97,31 @@ public class Point implements GeometricalForm {
 	public int getHeight() {
 		return 0;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getX() {
-		return 0;
+		return x;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public int getY() {
-		return 0;
+		return y;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public void move(int dx, int dy) throws IllegalPositionException {
+		place(x + dx, y + dy);
 	}
-
+	
 	/**
 	 * The perimeter of a point is defined as zero.
 	 */
@@ -115,12 +129,16 @@ public class Point implements GeometricalForm {
 	public int getPerimeter() {
 		return 0;
 	}
-
+	
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public void place(int x, int y) throws IllegalPositionException {
+		if (x < 0 || y < 0)
+			throw new IllegalPositionException(String.format(
+					"Illegal position (%d; %d)", x, y));
+		this.x = x;
+		this.y = y;
 	}
-
 }
