@@ -6,11 +6,9 @@ import java.awt.Graphics;
 /**
  * Implementation of GeometricalForm that describes a line.
  */
-public class Line implements GeometricalForm {
+public class Line extends AbstractForm {
 
-	private int x1, y1;
-	private int x2, y2;
-	private Color color;
+	private boolean positiveSlope;
 
 	/**
 	 * Construct a line between two given positions, with the given color.
@@ -30,20 +28,9 @@ public class Line implements GeometricalForm {
 	 */
 	public Line(int x1, int y1, int x2, int y2, Color c)
 			throws IllegalPositionException {
-		// Check first coordinate.
-		if (x1 < 0 || y1 < 0)
-			throw new IllegalPositionException(String.format(
-					"Illegal position #1 in Line constructor (%d; %d)", x1, y1));
-		// Check second coordinate.
-		if (x2 < 0 || y2 < 0)
-			throw new IllegalPositionException(String.format(
-					"Illegal position #2 in Line constructor (%d; %d)", x2, y2));
-		// Ok.
-		this.x1 = x1;
-		this.y1 = y1;
-		this.x2 = x2;
-		this.y2 = y2;
-		this.color = c;
+		super(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2)
+				- Math.min(x1, x2), Math.max(y1, y2) - Math.min(y1, y2), c);
+		positiveSlope = (x2 - x1) * (y2 - y1) >= 0;
 	}
 
 	/**
@@ -56,14 +43,17 @@ public class Line implements GeometricalForm {
 	 *            The second geometrical form.
 	 * @param c
 	 *            The color of the line.
+	 * @throws IllegalPositionException 
+	 * 	          Java demands this be here, but it can never happen.
 	 */
-	public Line(GeometricalForm f1, GeometricalForm f2, Color c) {
-		// f1 and f2 have valid coordinates by contract.
-		this.x1 = f1.getX();
-		this.y1 = f1.getY();
-		this.x2 = f2.getX();
-		this.y2 = f2.getY();
-		this.color = c;
+	public Line(GeometricalForm f1, GeometricalForm f2, Color c) throws IllegalPositionException {
+		super(
+				Math.min(f1.getX(), f2.getX()),
+				Math.min(f1.getY(), f2.getY()),
+				Math.max(f1.getX(), f2.getX()) - Math.min(f1.getX(), f2.getX()),
+				Math.max(f1.getY(), f2.getY()) - Math.min(f1.getY(), f2.getY()),
+				c);
+		positiveSlope = (f2.getX() - f1.getX()) * (f2.getY() - f1.getY()) >= 0;
 	}
 
 	/**
@@ -78,98 +68,20 @@ public class Line implements GeometricalForm {
 	 * @inheritDoc
 	 */
 	@Override
-	public int compareTo(GeometricalForm f) {
-		if (f.getArea() > 0)
-			return -1;
-		else
-			return getPerimeter() - f.getPerimeter();
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
 	public void fill(Graphics g) {
-		g.setColor(color);
-		g.drawLine(x1, y1, x2, y2);
+		g.setColor(getColor());
+		if (positiveSlope)
+			g.drawLine(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+		else
+			g.drawLine(getX(), getY() + getHeight(), getX() + getWidth(), getY());
 	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public Color getColor() {
-		return color;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public int getWidth() {
-		return Math.abs(x1 - x2);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public int getHeight() {
-		return Math.abs(y1 - y2);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public int getX() {
-		return Math.min(x1, x2);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public int getY() {
-		return Math.min(y1, y2);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public void move(int dx, int dy) throws IllegalPositionException {
-		place(getX() + dx, getY() + dy);
-	}
-
+	
 	/**
 	 * Returns the perimeter of the line, which is defined as its length.
 	 */
 	@Override
 	public int getPerimeter() {
-		int dx = x1 - x2;
-		int dy = y1 - y2;
-		return (int) Math.round(Math.sqrt(dx * dx + dy * dy));
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
-	public void place(int x, int y) throws IllegalPositionException {
-		// Check that the given point is valid.
-		if (x < 0 || y < 0)
-			throw new IllegalPositionException(String.format(
-					"Illegal position (%d; %d)", x, y));
-		// Compute amount needed to move to place the upper left corner at the
-		// given point.
-		int moveX = x - getX();
-		int moveY = y - getY();
-		// Move endpoints.
-		x1 += moveX;
-		y1 += moveY;
-		x2 += moveX;
-		y2 += moveY;
+		return (int) Math.round(Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()));
 	}
 
 }
