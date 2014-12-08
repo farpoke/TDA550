@@ -23,7 +23,7 @@ public class ReversiFactory implements IGameFactory {
 	 *             if no such game
 	 */
 	@Override
-	public IGameModel createGame(final String gameName) {
+	public GameModel createGame(final String gameName) {
 		if (gameName.equals("Gold")) {
 			return new GoldModel();
 		}

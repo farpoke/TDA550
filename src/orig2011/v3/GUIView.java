@@ -99,7 +99,7 @@ public class GUIView extends JPanel {
 				// Get the name of the game selected in the Choice
 				String gameName =
 						GUIView.this.gameChooser.getSelectedItem().toString();
-				IGameModel gameModel =
+				GameModel gameModel =
 						GUIView.this.gameFactory.createGame(gameName);
 
 				// Stop current game (if any) and start a new game with the

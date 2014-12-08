@@ -1,4 +1,4 @@
-package orig2011.v3;
+package orig2011.v2;
 
 import java.awt.Dimension;
 
@@ -8,7 +8,7 @@ import java.awt.Dimension;
  * Constructors of subclasses should initiate matrix elements and additional,
  * game-dependent fields.
  */
-public interface IGameModel {
+public interface GameModel {
 	
 	/**
 	 * Returns the size of the gameboard.

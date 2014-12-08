@@ -21,7 +21,7 @@ public class GameView extends JComponent {
 	private final Dimension tileSize;
 
 	/** The game model which is drawn */
-	private IGameModel model;
+	private GameModel model;
 
 	/** The offscreen buffer */
 	private Graphics offscreenGraphics;
@@ -54,7 +54,7 @@ public class GameView extends JComponent {
 	/**
 	 * Updates the view with a new model.
 	 */
-	public void setModel(final IGameModel model) {
+	public void setModel(final GameModel model) {
 		this.model = model;
 		repaint();
 	}

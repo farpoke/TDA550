@@ -18,5 +18,5 @@ public interface IGameFactory {
 	 * @throws IllegalArgumentException
 	 *             if no such game
 	 */
-	public IGameModel createGame(final String gameName);
+	public GameModel createGame(final String gameName);
 }

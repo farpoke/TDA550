@@ -16,7 +16,7 @@ import java.util.List;
  * of remaining coins. The game is won when all coins are collected and lost
  * when collector leaves game board.
  */
-public class GoldModel implements IGameModel {
+public class GoldModel implements GameModel {
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
 		private final int xDelta;
