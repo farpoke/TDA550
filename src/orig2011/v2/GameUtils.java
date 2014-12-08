@@ -6,7 +6,7 @@ import orig2011.v0.GameOverException;
 import orig2011.v0.GameTile;
 import orig2011.v0.Position;
 
-public class GameUtils {
+public class GameUtils implements GameModel {
 	protected GameModel() {
 		this.gameboardState = new GameTile[this.gameboardSize.width][this.gameboardSize.height];
 	}
