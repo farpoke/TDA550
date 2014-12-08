@@ -6,11 +6,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import orig2011.v0.GameOverException;
-import orig2011.v0.GameTile;
-import orig2011.v0.Position;
-import orig2011.v0.RoundTile;
-
 /**
  * Sample game for illustration. Intentionally stupid; more interesting games to
  * be provided by students.
@@ -21,7 +16,7 @@ import orig2011.v0.RoundTile;
  * of remaining coins. The game is won when all coins are collected and lost
  * when collector leaves game board.
  */
-public class GoldModel implements GameModel {
+public class GoldModel implements IGameModel {
 	public enum Directions {
 		EAST(1, 0), WEST(-1, 0), NORTH(0, -1), SOUTH(0, 1), NONE(0, 0);
 		private final int xDelta;
@@ -42,7 +37,7 @@ public class GoldModel implements GameModel {
 	}
 	
 	private static final int COIN_START_AMOUNT = 20;
-	private static final Dimension BOARD_SIZE = new Dimension(20, 20);
+	private static final Dimension BOARD_SIZE = Constants.getGameSize();
 	/*
 	 * The following GameTile objects are used only to describe how to paint the
 	 * specified item.
@@ -199,5 +194,15 @@ public class GoldModel implements GameModel {
 	private boolean isOutOfBounds(Position pos) {
 		return pos.getX() < 0 || pos.getX() >= BOARD_SIZE.width
 				|| pos.getY() < 0 || pos.getY() >= BOARD_SIZE.height;
+	}
+
+	@Override
+	public GameTile getGameboardState(int x, int y) {
+		return GameUtils.getGameboardState(board, x, y);
+	}
+
+	@Override
+	public Dimension getGameboardSize() {
+		return BOARD_SIZE;
 	}
 }

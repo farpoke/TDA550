@@ -1,8 +1,5 @@
 package orig2011.v2;
 
-import orig2011.v0.GameTile;
-import orig2011.v0.Position;
-
 public abstract class GameUtils {
 	
 	/**
