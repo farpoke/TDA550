@@ -208,6 +208,11 @@ public class GoldModel implements GameModel {
 	public GameTile getGameboardState(int x, int y) {
 		return GameUtils.getGameboardState(board, x, y);
 	}
+	
+	@Override
+	public GameTile getGameboardState(Position pos) {
+		return GameUtils.getGameboardState(board, pos.getX(),pos.getY());
+	}
 
 	@Override
 	public Dimension getGameboardSize() {
@@ -228,4 +233,6 @@ public class GoldModel implements GameModel {
 	public void removeObserver(PropertyChangeListener observer) {
 		propertyChangeSupport.removePropertyChangeListener(observer);
 	}
+
+	
 }
