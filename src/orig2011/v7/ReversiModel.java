@@ -150,13 +150,16 @@ public class ReversiModel implements GameModel {
 				this.board[this.cursorPos.getX()][this.cursorPos.getY()] = (this.turn == Turn.BLACK ? PieceColor.BLACK
 						: PieceColor.WHITE);
 				this.turn = Turn.nextTurn(this.turn);
+                propertyChangeSupport.firePropertyChange("newTurn", null, null);
 			}
 			if (!canTurn(this.turn)) {
 				if (!canTurn(Turn.nextTurn(this.turn))) {
 					this.gameOver = true;
+                    propertyChangeSupport.firePropertyChange("gameOver", null, null);
 					return;
 				}
 				this.turn = Turn.nextTurn(this.turn);
+                propertyChangeSupport.firePropertyChange("newTurn", null, null);
 			}
 		}
 	}
@@ -292,7 +295,7 @@ public class ReversiModel implements GameModel {
 					Math.min(nextCursorPos.getY(), boardSize.height - 1));
 			nextCursorPos = new Position(nextX, nextY);
 			this.cursorPos = nextCursorPos;
-			propertyChangeSupport.firePropertyChange("GameBoardState", null,
+			propertyChangeSupport.firePropertyChange("stateChange", null,
 					null);
 		} else {
 			throw new GameOverException(this.blackScore - this.whiteScore);

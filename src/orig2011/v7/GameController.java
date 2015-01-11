@@ -18,8 +18,7 @@ public class GameController implements Runnable {
 
 	/** The game model describes the running game. */
 	private GameModel gameModel;
-
-	private Object updateSignal = new Object();
+    private int updateDelay;
 	
 	/** True when game is running. */
 	private boolean isRunning;
@@ -68,8 +67,16 @@ public class GameController implements Runnable {
 	 * Add a key press to the end of the queue
 	 */
 	private synchronized void enqueueKeyPress(final int key) {
-		this.keypresses.add(Integer.valueOf(key));
-		this.notifyAll();
+        if (isRunning && updateDelay < 0) {
+            try {
+                gameModel.gameUpdate(key);
+            }
+            catch (GameOverException e) {
+                isRunning = false;
+            }
+        }
+        else
+		    this.keypresses.add(Integer.valueOf(key));
 	}
 
 	/**
@@ -105,11 +112,17 @@ public class GameController implements Runnable {
 
 		// Actually start the game
 		this.gameModel = gameModel;
+        this.updateDelay = gameModel.getUpdateSpeed();
 		this.isRunning = true;
 
-		// Create the new thread and start it...
-		this.gameThread = new Thread(this);
-		this.gameThread.start();
+        if (updateDelay >= 0) {
+            // Create the new thread and start it...
+            this.gameThread = new Thread(this);
+            this.gameThread.start();
+        }
+        else {
+            this.gameThread = null;
+        }
 	}
 
 	/**
@@ -119,9 +132,6 @@ public class GameController implements Runnable {
 		// Setting isRunning to false will
 		// make the thread stop (see run())
 		this.isRunning = false;
-		synchronized(this) {
-			this.notifyAll();
-		}
 
 		// Unset the game model...
 		this.view.setModel(null);
@@ -152,15 +162,8 @@ public class GameController implements Runnable {
 				// Tell model to update, send next key press.
 				// or 0 if no new keypress since last update.
 				this.gameModel.gameUpdate(nextKeyPress());
-
-				int delay = this.gameModel.getUpdateSpeed();
-				if (delay > 0) {
-					Thread.sleep(delay);
-				} else if (delay < 0) {
-					synchronized(this) {
-						this.wait();
-					}
-				}
+                //
+		        Thread.sleep(updateDelay);
 			} catch (GameOverException e) {
 				// we got a game over signal, time to exit...
 				// The current implementation ignores the game score
